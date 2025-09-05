@@ -25,6 +25,17 @@ def get_random_sunny_gif():
     gif = random.choice(results)
     return gif["media_formats"]["gif"]["url"]
 
-# Example usage:
+
+def download_gif(gif_url, filename="sunny.gif"):
+    response = requests.get(gif_url)
+    response.raise_for_status()
+    with open(filename, "wb") as f:
+        f.write(response.content)
+    return filename
+
 gif_url = get_random_sunny_gif()
-print(gif_url)
+if gif_url:
+    filename = download_gif(gif_url)
+    print(f"downloaded gif to {filename}")
+else:
+    print(f"No gif found.")
