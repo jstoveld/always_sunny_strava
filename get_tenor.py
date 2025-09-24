@@ -17,10 +17,18 @@ def fetch_imdb_quotes():
     response.raise_for_status()
     soup = BeautifulSoup(response.text, "html.parser")
     quotes = []
-    # Use CSS selector to target quote <li> elements
     for li in soup.select("div.ipc-html-content-inner-div ul li"):
         text = li.get_text(separator=" ", strip=True)
-        if len(text) > 20:
+        # Remove character names (everything before the first colon)
+        lines = []
+        for line in text.split('\n'):
+            if ":" in line and len(line) > 20:
+                quote_only = line.split(":", 1)[1].strip()
+                if len(quote_only) > 10:
+                    lines.append(quote_only)
+        if lines:
+            quotes.extend(lines)
+        elif len(text) > 20 and ":" not in text:
             quotes.append(text)
     return quotes
 
